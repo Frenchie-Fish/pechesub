@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finaliser la commande — Pechetruite.com</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f0e8; --surface:#ffffff; --border:#ddd6c8;
+  --accent:#1c1a14; --accent2:#c9a84c;
+  --green:#4a7c20; --purple:#5a3a8a; --brown:#7a5c1e;
+  --text:#252318; --muted:#8a8272;
+  --error:#c0392b; --success:#27ae60;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+header{background:var(--accent);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--accent2);}
+.brand{font-size:16px;color:#fff;font-weight:500;letter-spacing:.05em;}
+.brand em{color:var(--accent2);font-style:normal;}
+.back-link{font-size:11px;color:#888;text-decoration:none;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--accent2);}
+
+.page{max-width:1000px;margin:0 auto;padding:40px 24px 80px;display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start;}
+
+/* ── ÉTAPES ── */
+.steps{display:flex;gap:0;margin-bottom:32px;grid-column:1/-1;}
+.step{flex:1;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-bottom:3px solid var(--border);color:var(--muted);transition:all .2s;}
+.step.active{border-color:var(--accent2);color:var(--text);}
+.step.done{border-color:var(--green);color:var(--green);}
+.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;background:var(--border);color:var(--muted);flex-shrink:0;}
+.step.active .step-num{background:var(--accent2);color:var(--accent);}
+.step.done .step-num{background:var(--green);color:#fff;}
+
+/* ── COLONNE GAUCHE ── */
+.col-left{}
+
+/* Récap panier */
+.card-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:24px;overflow:hidden;}
+.card-box-head{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.card-box-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text);}
+.card-box-tag{font-size:10px;color:var(--muted);letter-spacing:.1em;}
+
+.cart-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);}
+.cart-item:last-child{border-bottom:none;}
+.ci-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;border:1px solid rgba(0,0,0,.12);}
+.ci-source{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.ci-label{font-size:13px;font-weight:500;margin-bottom:2px;}
+.ci-detail{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.ci-price{font-family:'DM Mono',monospace;font-size:13px;color:var(--brown);margin-left:auto;white-space:nowrap;}
+.ci-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px;margin-left:8px;transition:color .1s;flex-shrink:0;}
+.ci-del:hover{color:var(--error);}
+
+.cart-empty-msg{padding:40px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;}
+
+/* ── FORMULAIRE IDENTITÉ ── */
+.form-section{margin-bottom:12px;}
+.form-label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-row-1{margin-bottom:12px;}
+.form-input{
+  width:100%;padding:11px 14px;
+  border:1px solid var(--border);border-radius:4px;
+  background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--text);transition:border-color .15s;
+}
+.form-input:focus{outline:none;border-color:var(--accent2);}
+.form-input.error{border-color:var(--error);}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-error{font-size:11px;color:var(--error);margin-top:4px;display:none;}
+.form-error.show{display:block;}
+
+/* Moyen de paiement */
+.payment-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.pay-btn{
+  padding:14px 10px;border:2px solid var(--border);border-radius:6px;
+  background:var(--surface);cursor:pointer;text-align:center;transition:all .15s;
+}
+.pay-btn:hover{border-color:var(--accent2);}
+.pay-btn.active{border-color:var(--accent);background:rgba(28,26,20,.04);}
+.pay-icon{font-size:22px;margin-bottom:6px;}
+.pay-label{font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--text);}
+.pay-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ── COLONNE DROITE (récap commande) ── */
+.col-right{position:sticky;top:80px;}
+.summary-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.summary-head{padding:14px 20px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;}
+.summary-lines{padding:16px 20px;display:flex;flex-direction:column;gap:8px;}
+.summary-line{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+.summary-line span:last-child{font-family:'DM Mono',monospace;}
+.summary-total{border-top:2px solid var(--border);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+.summary-total-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.summary-total-val{font-family:'DM Mono',monospace;font-size:22px;color:var(--brown);font-weight:500;}
+.summary-note{padding:0 20px 16px;font-size:11px;color:var(--muted);line-height:1.6;}
+
+.btn-submit{
+  width:100%;background:var(--accent);color:#fff;border:none;border-radius:4px;
+  padding:16px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;letter-spacing:.08em;text-transform:uppercase;
+  transition:opacity .15s;margin-top:16px;
+}
+.btn-submit:hover{opacity:.85;}
+.btn-submit:disabled{opacity:.3;cursor:not-allowed;}
+
+.source-badge{
+  display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  padding:2px 6px;border-radius:2px;margin-right:6px;font-weight:600;
+}
+.source-billes{background:rgba(74,124,32,.12);color:var(--green);}
+.source-kamasan{background:rgba(90,58,138,.12);color:var(--purple);}
+.source-cdc{background:rgba(122,92,30,.12);color:var(--brown);}
+
+/* Confirmation */
+.confirm-overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);align-items:center;justify-content:center;}
+.confirm-overlay.show{display:flex;}
+.confirm-box{background:var(--surface);border-radius:8px;padding:48px 40px;max-width:480px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.confirm-icon{font-size:52px;margin-bottom:20px;}
+.confirm-title{font-family:'DM Mono',monospace;font-size:18px;letter-spacing:.1em;color:var(--text);margin-bottom:12px;}
+.confirm-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:28px;}
+.confirm-ref{font-family:'DM Mono',monospace;font-size:12px;background:var(--bg);padding:8px 16px;border-radius:4px;display:inline-block;margin-bottom:24px;color:var(--brown);}
+.confirm-btn{background:var(--accent);color:#fff;border:none;border-radius:4px;padding:13px 28px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;}
+
+@media(max-width:760px){
+  .page{grid-template-columns:1fr;padding:20px 16px 60px;gap:20px;}
+  .steps{gap:0;overflow-x:auto;}
+  .step{min-width:100px;font-size:10px;padding:10px 12px;}
+  .form-row{grid-template-columns:1fr;}
+  .payment-grid{grid-template-columns:1fr 1fr 1fr;}
+  .col-right{position:static;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Peche<em>truite</em>.com</div>
+  <a class="back-link" href="index.html">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Retour au catalogue
+  </a>
+</header>
+
+<div class="page">
+
+  <!-- Étapes -->
+  <div class="steps">
+    <div class="step done" id="step1"><span class="step-num">✓</span>Panier</div>
+    <div class="step active" id="step2"><span class="step-num">2</span>Coordonnées</div>
+    <div class="step" id="step3"><span class="step-num">3</span>Paiement</div>
+    <div class="step" id="step4"><span class="step-num">4</span>Confirmation</div>
+  </div>
+
+  <!-- Colonne gauche -->
+  <div class="col-left">
+
+    <!-- Récap panier -->
+    <div class="card-box">
+      <div class="card-box-head">
+        <span class="card-box-title">Votre commande</span>
+        <span class="card-box-tag" id="cartLineCount">0 article(s)</span>
+      </div>
+      <div id="cartRecap"><div class="cart-empty-msg">Panier vide.<br>Retournez au catalogue pour ajouter des produits.</div></div>
+    </div>
+
+    <!-- Identité -->
+    <div class="card-box">
+      <div class="card-box-head">
+        <span class="card-box-title">Vos coordonnées</span>
+      </div>
+      <div style="padding:20px">
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="fPrenom">Prénom *</label>
+            <input class="form-input" type="text" id="fPrenom" placeholder="Jean">
+            <div class="form-error" id="errPrenom">Champ requis</div>
+          </div>
+          <div>
+            <label class="form-label" for="fNom">Nom *</label>
+            <input class="form-input" type="text" id="fNom" placeholder="Dupont">
+            <div class="form-error" id="errNom">Champ requis</div>
+          </div>
+        </div>
+        <div class="form-row-1">
+          <label class="form-label" for="fAdresse">Adresse *</label>
+          <input class="form-input" type="text" id="fAdresse" placeholder="12 rue de la Rivière">
+          <div class="form-error" id="errAdresse">Champ requis</div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="fCP">Code postal *</label>
+            <input class="form-input" type="text" id="fCP" placeholder="69001">
+            <div class="form-error" id="errCP">Champ requis</div>
+          </div>
+          <div>
+            <label class="form-label" for="fVille">Ville *</label>
+            <input class="form-input" type="text" id="fVille" placeholder="Lyon">
+            <div class="form-error" id="errVille">Champ requis</div>
+          </div>
+        </div>
+        <div class="form-row-1">
+          <label class="form-label" for="fPays">Pays *</label>
+          <input class="form-input" type="text" id="fPays" placeholder="France" value="France">
+          <div class="form-error" id="errPays">Champ requis</div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="fEmail">E-mail *</label>
+            <input class="form-input" type="email" id="fEmail" placeholder="jean.dupont@email.fr">
+            <div class="form-error" id="errEmail">Email invalide</div>
+          </div>
+          <div>
+            <label class="form-label" for="fTel">Téléphone</label>
+            <input class="form-input" type="tel" id="fTel" placeholder="+33 6 12 34 56 78">
+          </div>
+        </div>
+        <div class="form-row-1">
+          <label class="form-label" for="fComment">Commentaire / remarque</label>
+          <textarea class="form-input form-textarea" id="fComment" placeholder="Instructions de livraison, précisions sur la commande…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paiement -->
+    <div class="card-box">
+      <div class="card-box-head">
+        <span class="card-box-title">Moyen de paiement</span>
+      </div>
+      <div style="padding:20px">
+        <div class="payment-grid">
+          <div class="pay-btn" id="pay-cheque" onclick="selectPay('cheque')">
+            <div class="pay-icon">✉️</div>
+            <div class="pay-label">Chèque</div>
+            <div class="pay-sub">À l'ordre de Pechetruite</div>
+          </div>
+          <div class="pay-btn" id="pay-paypal" onclick="selectPay('paypal')">
+            <div class="pay-icon">🅿️</div>
+            <div class="pay-label">PayPal</div>
+            <div class="pay-sub">Paiement sécurisé</div>
+          </div>
+          <div class="pay-btn" id="pay-carte" onclick="selectPay('carte')">
+            <div class="pay-icon">💳</div>
+            <div class="pay-label">Carte</div>
+            <div class="pay-sub">CB, Visa, Mastercard</div>
+          </div>
+        </div>
+        <div class="form-error" id="errPay" style="display:none">Veuillez choisir un moyen de paiement</div>
+        <div id="payInfo" style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:4px;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Colonne droite -->
+  <div class="col-right">
+    <div class="summary-box">
+      <div class="summary-head">Récapitulatif</div>
+      <div class="summary-lines" id="summaryLines"></div>
+      <div class="summary-total">
+        <span class="summary-total-label">Total</span>
+        <span class="summary-total-val" id="summaryTotal">0,00 €</span>
+      </div>
+      <div class="summary-note">Frais de port calculés selon le pays de livraison et communiqués par email.</div>
+    </div>
+    <button class="btn-submit" id="btnSubmit" onclick="submitOrder()">
+      Valider la commande →
+    </button>
+    <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6;letter-spacing:.05em;">
+      En validant vous acceptez nos conditions générales de vente.<br>
+      Commande confirmée par email après validation.
+    </div>
+  </div>
+
+</div>
+
+<!-- Confirmation -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">✅</div>
+    <div class="confirm-title">Commande enregistrée !</div>
+    <div class="confirm-sub">Merci pour votre commande.<br>Vous allez recevoir un email de confirmation à l'adresse indiquée.</div>
+    <div class="confirm-ref" id="confirmRef">Réf. PT-000000</div>
+    <div class="confirm-sub" id="confirmPayInfo"></div>
+    <br>
+    <button class="confirm-btn" onclick="window.location.href='index.html'">Retour au catalogue</button>
+  </div>
+</div>
+
+<script>
+/**
+ * panier-partage.js
+ * Panier partagé entre toutes les pages du catalogue.
+ * Stockage : localStorage['panierId'] = JSON array d'items normalisés.
+ *
+ * Structure d'un item :
+ * { source, key, label, detail, qty, prixUnit, hex }
+ *   source  : 'billes' | 'kamasan' | 'cdc'
+ *   key     : identifiant unique (ex: 'cuivre-3,0-1')
+ *   label   : texte principal (ex: 'Cuivre · Ø3,0 mm')
+ *   detail  : texte secondaire (ex: '2× ×25 = 50 billes')
+ *   qty     : nombre de sachets
+ *   prixUnit: prix par sachet
+ *   hex     : couleur CSS pour le point décoratif
+ */
+
+var SHARED_CART_KEY = 'pechetruite_panier';
+
+var SharedCart = {
+
+  // Lire tout le panier
+  load: function() {
+    try {
+      var raw = localStorage.getItem(SHARED_CART_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  },
+
+  // Sauvegarder
+  save: function(items) {
+    try { localStorage.setItem(SHARED_CART_KEY, JSON.stringify(items)); }
+    catch(e) {}
+  },
+
+  // Ajouter / remplacer un item (par source+key)
+  upsert: function(source, key, label, detail, qty, prixUnit, hex) {
+    var items = this.load();
+    var fullKey = source + '__' + key;
+    var idx = -1;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].fullKey === fullKey) { idx = i; break; }
+    }
+    var item = { fullKey: fullKey, source: source, key: key,
+                 label: label, detail: detail,
+                 qty: qty, prixUnit: prixUnit, hex: hex || '#888' };
+    if (qty <= 0) {
+      if (idx !== -1) items.splice(idx, 1);
+    } else {
+      if (idx !== -1) items[idx] = item;
+      else items.push(item);
+    }
+    this.save(items);
+    this.updateBadge();
+  },
+
+  // Supprimer un item
+  remove: function(fullKey) {
+    var items = this.load().filter(function(i){ return i.fullKey !== fullKey; });
+    this.save(items);
+    this.updateBadge();
+  },
+
+  // Vider le panier
+  clear: function() {
+    localStorage.removeItem(SHARED_CART_KEY);
+    this.updateBadge();
+  },
+
+  // Total général
+  total: function() {
+    return this.load().reduce(function(s, i){ return s + i.qty * i.prixUnit; }, 0);
+  },
+
+  // Nombre total de lignes
+  count: function() {
+    return this.load().length;
+  },
+
+  // Mettre à jour le badge FAB panier partagé s'il existe
+  updateBadge: function() {
+    var n = this.count();
+    var el = document.getElementById('sharedCartBadge');
+    if (el) el.textContent = n;
+    var fab = document.getElementById('sharedCartFab');
+    if (fab) fab.style.display = n > 0 ? 'flex' : 'none';
+  }
+};
+
+</script>
+<script>
+var selectedPay = null;
+var SOURCE_LABELS = { billes:'Billes tungstène', kamasan:'Hameçons Kamasan', cdc:'Plumes CDC' };
+
+function renderCheckout() {
+  var items = SharedCart.load();
+  var recapEl = document.getElementById('cartRecap');
+  var lineCountEl = document.getElementById('cartLineCount');
+  var summaryLines = document.getElementById('summaryLines');
+  var summaryTotal = document.getElementById('summaryTotal');
+
+  if (!items.length) {
+    recapEl.innerHTML = '<div class="cart-empty-msg">Panier vide.<br><a href="index.html" style="color:var(--brown)">Retour au catalogue</a></div>';
+    lineCountEl.textContent = '0 article';
+    summaryLines.innerHTML = '';
+    summaryTotal.textContent = '0,00 €';
+    document.getElementById('btnSubmit').disabled = true;
+    return;
+  }
+
+  var total = 0;
+  var html = '';
+  var summHtml = '';
+
+  items.forEach(function(item) {
+    var lineTotal = item.qty * item.prixUnit;
+    total += lineTotal;
+    html += '<div class="cart-item">'
+      + '<span class="ci-dot" style="background:' + item.hex + '"></span>'
+      + '<div style="flex:1">'
+      + '<div class="ci-source"><span class="source-badge source-' + item.source + '">' + (SOURCE_LABELS[item.source] || item.source) + '</span></div>'
+      + '<div class="ci-label">' + item.label + '</div>'
+      + '<div class="ci-detail">' + item.detail + '</div>'
+      + '</div>'
+      + '<span class="ci-price">' + lineTotal.toFixed(2) + ' €</span>'
+      + '<button class="ci-del" onclick="removeFromCart(\'' + item.fullKey + '\')" title="Supprimer">✕</button>'
+      + '</div>';
+    summHtml += '<div class="summary-line"><span>' + item.label + '</span><span>' + lineTotal.toFixed(2) + ' €</span></div>';
+  });
+
+  recapEl.innerHTML = html;
+  lineCountEl.textContent = items.length + ' article' + (items.length > 1 ? 's' : '');
+  summaryLines.innerHTML = summHtml;
+  summaryTotal.textContent = total.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('btnSubmit').disabled = false;
+}
+
+function removeFromCart(fullKey) {
+  SharedCart.remove(fullKey);
+  renderCheckout();
+}
+
+function selectPay(type) {
+  selectedPay = type;
+  ['cheque','paypal','carte'].forEach(function(t){
+    document.getElementById('pay-'+t).classList.toggle('active', t === type);
+  });
+  document.getElementById('errPay').style.display = 'none';
+  var infos = {
+    cheque: 'Envoyez votre chèque à l\'ordre de <strong>Pechetruite.com</strong> avec votre bon de commande. Expédition dès réception.',
+    paypal: 'Vous serez redirigé vers PayPal pour finaliser le paiement de manière sécurisée.',
+    carte:  'Paiement sécurisé par carte bancaire via notre partenaire de paiement. CB, Visa, Mastercard acceptés.'
+  };
+  document.getElementById('payInfo').innerHTML = infos[type] || '';
+}
+
+function validateForm() {
+  var ok = true;
+  var fields = [
+    {id:'fPrenom', err:'errPrenom', check: function(v){ return v.trim().length > 0; }},
+    {id:'fNom',    err:'errNom',    check: function(v){ return v.trim().length > 0; }},
+    {id:'fAdresse',err:'errAdresse',check: function(v){ return v.trim().length > 0; }},
+    {id:'fCP',     err:'errCP',     check: function(v){ return v.trim().length >= 4; }},
+    {id:'fVille',  err:'errVille',  check: function(v){ return v.trim().length > 0; }},
+    {id:'fPays',   err:'errPays',   check: function(v){ return v.trim().length > 0; }},
+    {id:'fEmail',  err:'errEmail',  check: function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }},
+  ];
+  fields.forEach(function(f) {
+    var val = document.getElementById(f.id).value;
+    var valid = f.check(val);
+    document.getElementById(f.id).classList.toggle('error', !valid);
+    document.getElementById(f.err).classList.toggle('show', !valid);
+    if (!valid) ok = false;
+  });
+  if (!selectedPay) {
+    document.getElementById('errPay').style.display = 'block';
+    ok = false;
+  }
+  if (SharedCart.count() === 0) ok = false;
+  return ok;
+}
+
+function submitOrder() {
+  if (!validateForm()) {
+    // Scroll vers le premier champ en erreur
+    var first = document.querySelector('.form-input.error');
+    if (first) first.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Générer référence commande
+  var ref = 'PT-' + Date.now().toString().slice(-6);
+
+  // Étapes visuelles
+  document.getElementById('step2').className = 'step done';
+  document.getElementById('step2').querySelector('.step-num').textContent = '✓';
+  document.getElementById('step3').className = 'step done';
+  document.getElementById('step3').querySelector('.step-num').textContent = '✓';
+  document.getElementById('step4').className = 'step active';
+
+  // Confirmation
+  document.getElementById('confirmRef').textContent = 'Réf. ' + ref;
+  var payLabels = { cheque: 'Envoyez votre chèque à l\'ordre de Pechetruite.com avec la référence ' + ref + '.', paypal: 'Vous allez être redirigé vers PayPal.', carte: 'Vous allez être redirigé vers notre page de paiement sécurisé.' };
+  document.getElementById('confirmPayInfo').textContent = payLabels[selectedPay] || '';
+  document.getElementById('confirmOverlay').classList.add('show');
+
+  // Vider le panier partagé
+  SharedCart.clear();
+}
+
+// Initialisation
+renderCheckout();
+
+// Pré-remplir si déjà visité (localStorage optionnel)
+(function(){
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem('pt_client') || 'null'); } catch(e){}
+  if (saved) {
+    ['Prenom','Nom','Adresse','CP','Ville','Pays','Email','Tel'].forEach(function(k){
+      var el = document.getElementById('f'+k);
+      if (el && saved[k]) el.value = saved[k];
+    });
+  }
+})();
+
+// Sauvegarder les champs au changement
+['fPrenom','fNom','fAdresse','fCP','fVille','fPays','fEmail','fTel'].forEach(function(id){
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('blur', function(){
+    var data = {};
+    ['Prenom','Nom','Adresse','CP','Ville','Pays','Email','Tel'].forEach(function(k){
+      var e = document.getElementById('f'+k);
+      if (e) data[k] = e.value;
+    });
+    try { localStorage.setItem('pt_client', JSON.stringify(data)); } catch(e){}
+  });
+});
+</script>
+</body>
+</html>
